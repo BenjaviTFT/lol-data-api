@@ -3,35 +3,57 @@ Database queries pour l'API
 """
 
 import sys
+import logging
+import traceback
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from db.connection import get_connection
 from typing import List, Dict, Any
 
+# Configuration logging pour Render
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 
 def execute_query(query: str, params: tuple = None) -> List[Dict[str, Any]]:
     """
     Execute une requete SQL et retourne les resultats en dict
     """
-    conn = get_connection()
-    cur = conn.cursor()
+    conn = None
+    cur = None
+    try:
+        logger.info(f"Executing query: {query[:100]}...")
+        conn = get_connection()
+        cur = conn.cursor()
 
-    if params:
-        cur.execute(query, params)
-    else:
-        cur.execute(query)
+        if params:
+            cur.execute(query, params)
+        else:
+            cur.execute(query)
 
-    columns = [desc[0] for desc in cur.description]
-    results = []
+        columns = [desc[0] for desc in cur.description]
+        results = []
 
-    for row in cur.fetchall():
-        results.append(dict(zip(columns, row)))
+        for row in cur.fetchall():
+            results.append(dict(zip(columns, row)))
 
-    cur.close()
-    conn.close()
+        logger.info(f"Query returned {len(results)} rows")
+        return results
 
-    return results
+    except Exception as e:
+        logger.error(f"Database error: {str(e)}")
+        logger.error(f"Full traceback:\n{traceback.format_exc()}")
+        raise
+
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
 
 def get_all_players() -> List[Dict]:

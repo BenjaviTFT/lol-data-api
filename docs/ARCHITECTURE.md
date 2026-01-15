@@ -23,6 +23,7 @@ lol-data/
 │ ├── match_service.py
 │ ├── duoq_service.py
 │ ├── item_service.py
+│ ├── rank_service.py
 │ └── update_service.py
 │
 ├── db/
@@ -78,9 +79,26 @@ Les routes appellent **uniquement** les services.
 
 - Déclenché via `POST /update`
 - Appelé au chargement frontend + refresh 10 min
-- Rate limit interne : 0.5s (safe Riot)
+- Rate limit interne : 0.5s entre appels API Riot
 - Gestion du flag via `UpdateService`
 - `try/finally` obligatoire (pas de variable globale)
+
+---
+
+## Endpoints API
+
+| Route | Méthode | Service | Description |
+|-------|---------|---------|-------------|
+| `/health` | GET | - | Healthcheck |
+| `/health/db` | GET | - | Test connexion DB |
+| `/players` | GET | PlayerService | Liste joueurs |
+| `/players/{id}` | GET | PlayerService | Détail joueur |
+| `/ranking` | GET | PlayerService | Classement performance |
+| `/ranking/ranked` | GET | RankService | Classement SoloQ (via Riot API live) |
+| `/duoq` | GET | DuoQService | Stats duo |
+| `/stats/global` | GET | PlayerService | Stats globales |
+| `/items/popular` | GET | ItemService | Items populaires |
+| `/update` | POST | UpdateService | Mise à jour données |
 
 ---
 
@@ -99,11 +117,52 @@ Data Dragon CDN :
 - Champions : `/img/champion/{key}.png`
 - Items : `/img/item/{id}.png`
 
+Community Dragon CDN :
+- Emblèmes ranked : `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/{tier}.png`
+
 ---
 
-## Règles de Stabilité
+## API Riot - Endpoints utilisés
 
-- ❌ Pas de refactor structurel sans mise à jour de ce fichier
-- ❌ Pas de logique métier dans les routes
-- ❌ Pas de calcul analytique hors SQL
-- ✅ Lisibilité > optimisation
+| Endpoint | Usage |
+|----------|-------|
+| `Match v5 by-puuid` | Récupération IDs de matchs |
+| `Match v5 by-id` | Détails d'un match |
+| `League v4 by-puuid` | Rangs SoloQ/Flex (tier, rank, LP, W/L) |
+
+📌 **Note importante**
+L'endpoint `Summoner v4` ne retourne plus le `summonerId`.
+Utiliser `League v4 by-puuid` directement pour les rangs.
+
+---
+
+## Deploiement (Render + Supabase)
+
+### Configuration connexion DB
+- **Local** : `localhost:5433` avec `POSTGRES_PASSWORD`
+- **Production** : variable `DATABASE_URL` (Supabase)
+
+La detection est automatique dans `db/connection.py` :
+- Si `DATABASE_URL` est definie → connexion Supabase
+- Sinon → connexion locale
+
+### Variables d'environnement Render
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | URL PostgreSQL Supabase |
+| `RIOT_API_KEY` | Cle API Riot Games |
+| `PYTHON_VERSION` | 3.11 (force) |
+
+### Diagnostics
+- `/health` : statut API
+- `/health/db` : test connexion DB + info `DATABASE_URL`
+- Logs detailles avec traceback en cas d'erreur
+
+---
+
+## Regles de Stabilite
+
+- Pas de refactor structurel sans mise a jour de ce fichier
+- Pas de logique metier dans les routes
+- Pas de calcul analytique hors SQL
+- Lisibilite > optimisation

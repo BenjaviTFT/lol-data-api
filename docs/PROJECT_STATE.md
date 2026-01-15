@@ -5,7 +5,12 @@ Analytics privé League of Legends pour 7 joueurs :
 ranking interne, stats individuelles, synergies DuoQ, dashboard dark, auto-update.
 
 ## Stack
-PostgreSQL 15 · Python 3.9 · FastAPI · Vanilla JS (no Node).
+PostgreSQL 15 · Python 3.11 · FastAPI · Vanilla JS (no Node).
+
+## Deploiement
+- **API** : Render (`https://lol-data-api.onrender.com`)
+- **DB** : Supabase PostgreSQL
+- **Connexion** : `DATABASE_URL` (auto-detection local/prod)
 
 ## Données actives
 - 547 matchs total
@@ -24,8 +29,8 @@ PostgreSQL 15 · Python 3.9 · FastAPI · Vanilla JS (no Node).
 - Séparation stricte routes / services / DB
 - Calculs analytiques exclusivement en SQL (vues)
 
-## Tâche en cours
-Ajout des **items (frontend + API)**.
+## Tache en cours
+Deploiement production - fix endpoint `/players` (connexion DB Supabase).
 
 ## Refactor terminé (3 phases)
 1. **Phase 1** ✅ – Nettoyage racine (tests → `tests/`, scripts → `scripts/`, docs → `docs/`)
