@@ -12,13 +12,13 @@ load_dotenv(dotenv_path=env_path)
 
 API_KEY = os.getenv("RIOT_API_KEY")
 
+# Ne pas crash si la cle n'existe pas (permet l'import en prod sans la cle)
+# Les fonctions qui l'utilisent retourneront des erreurs appropriees
 if not API_KEY:
-    raise RuntimeError(
-        "RIOT_API_KEY non trouvée. Vérifie le fichier config/.env"
-    )
+    print("WARNING: RIOT_API_KEY non trouvee - les appels Riot API echoueront")
 
 HEADERS = {
-    "X-Riot-Token": API_KEY
+    "X-Riot-Token": API_KEY or ""
 }
 
 # ============================================================
@@ -87,3 +87,70 @@ def get_match_detail(match_id):
         return None
 
     return response.json()
+
+
+# ============================================================
+# RECUPERER LE RANG RANKED D'UN JOUEUR
+# ============================================================
+
+def get_summoner_by_puuid(puuid: str, region: str = "euw1"):
+    """
+    Recupere les infos summoner depuis le PUUID
+    """
+    url = f"https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{puuid}"
+    response = requests.get(url, headers=HEADERS)
+
+    if response.status_code != 200:
+        return None
+
+    return response.json()
+
+
+def get_ranked_stats(summoner_id: str, region: str = "euw1"):
+    """
+    Recupere les stats ranked d'un joueur via son summoner ID
+    Retourne une liste avec les queues (RANKED_SOLO_5x5, RANKED_FLEX_SR, etc.)
+    """
+    url = f"https://{region}.api.riotgames.com/lol/league/v4/entries/by-summoner/{summoner_id}"
+    response = requests.get(url, headers=HEADERS)
+
+    if response.status_code != 200:
+        return []
+
+    return response.json()
+
+
+def get_ranked_by_puuid(puuid: str, region: str = "euw1"):
+    """
+    Recupere les stats ranked d'un joueur directement via PUUID
+    Endpoint: League v4 by-puuid
+    """
+    url = f"https://{region}.api.riotgames.com/lol/league/v4/entries/by-puuid/{puuid}"
+    response = requests.get(url, headers=HEADERS)
+
+    if response.status_code != 200:
+        return []
+
+    return response.json()
+
+
+def get_player_rank(puuid: str, region: str = "euw1"):
+    """
+    Recupere le rang SoloQ d'un joueur depuis son PUUID
+    Retourne: {tier, rank, lp, wins, losses} ou None
+    """
+    # Utiliser directement League v4 by-puuid
+    ranked_entries = get_ranked_by_puuid(puuid, region)
+
+    # Chercher la queue SoloQ
+    for entry in ranked_entries:
+        if entry.get("queueType") == "RANKED_SOLO_5x5":
+            return {
+                "tier": entry.get("tier"),
+                "rank": entry.get("rank"),
+                "lp": entry.get("leaguePoints"),
+                "wins": entry.get("wins"),
+                "losses": entry.get("losses")
+            }
+
+    return None
