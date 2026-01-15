@@ -11,9 +11,10 @@ from pathlib import Path
 # Ajouter le repertoire parent au path pour les imports
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, HTMLResponse
 from typing import List
 
 # Configuration logging
@@ -66,21 +67,10 @@ app.add_middleware(
 # ENDPOINTS - PLAYERS
 # ============================================================
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def root():
-    """Endpoint racine"""
-    return {
-        "message": "LoL Analytics API",
-        "version": "1.0.0",
-        "endpoints": {
-            "players": "/players",
-            "ranking": "/ranking",
-            "duoq": "/duoq",
-            "recent_matches": "/matches/recent",
-            "items_popular": "/items/popular",
-            "player_items": "/players/{id}/items"
-        }
-    }
+    """Sert la page d'accueil du frontend"""
+    return FileResponse("frontend/index.html")
 
 
 @app.get("/players", response_model=List[PlayerStats])
@@ -237,8 +227,25 @@ def get_update_status():
     return UpdateService.get_status()
 
 
-# Note: Le frontend est servi separement (Render Static Site ou autre)
-# Ne pas monter StaticFiles sur "/" car cela ecrase les routes API
+# Servir les fichiers statiques du frontend (CSS, JS)
+app.mount("/css", StaticFiles(directory="frontend/css"), name="css")
+app.mount("/js", StaticFiles(directory="frontend/js"), name="js")
+
+# Pages HTML du frontend
+@app.get("/player.html", response_class=HTMLResponse)
+def player_page():
+    """Sert la page profil joueur"""
+    return FileResponse("frontend/player.html")
+
+@app.get("/comparator.html", response_class=HTMLResponse)
+def comparator_page():
+    """Sert la page comparateur"""
+    return FileResponse("frontend/comparator.html")
+
+@app.get("/duoq.html", response_class=HTMLResponse)
+def duoq_page():
+    """Sert la page DuoQ"""
+    return FileResponse("frontend/duoq.html")
 
 if __name__ == "__main__":
     import uvicorn
