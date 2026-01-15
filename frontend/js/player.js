@@ -128,10 +128,16 @@ async function loadPlayerChampions(playerId) {
             return;
         }
 
-        // Table
+        // Table avec icones champions
         document.getElementById('championsTableBody').innerHTML = champions.map(champ => `
             <tr>
-                <td class="champion-name">${champ.champion_name}</td>
+                <td class="champion-cell">
+                    <img class="champion-icon"
+                         src="https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/${champ.champion_key}.png"
+                         alt="${champ.champion_name}"
+                         onerror="this.style.display='none'">
+                    <span class="champion-name">${champ.champion_name}</span>
+                </td>
                 <td>${champ.games_played}</td>
                 <td>
                     <span class="badge ${utils.getWinrateBadge(champ.winrate_pct)}">
@@ -330,20 +336,20 @@ async function loadPlayerItems(playerId) {
         container.innerHTML = items.map(item => `
             <div class="item-card">
                 <div class="item-icon">
-                    <img src="https://ddragon.leagueoflegends.com/cdn/14.1.1/img/item/${item.item_id}.png"
+                    <img src="https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/${item.item_id}.png"
                          alt="${item.item_name}"
-                         onerror="this.src='https://ddragon.leagueoflegends.com/cdn/14.1.1/img/item/0.png'">
+                         onerror="this.src='https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/0.png'">
                 </div>
                 <div class="item-info">
                     <div class="item-name">${item.item_name}</div>
                     <div class="item-stats">
                         <span class="item-stat">
                             <span class="item-stat-label">Achats</span>
-                            <span class="item-stat-value">${item.purchase_count}</span>
+                            <span class="item-stat-value">${item.times_bought}</span>
                         </span>
                         <span class="item-stat">
                             <span class="item-stat-label">Winrate</span>
-                            <span class="item-stat-value ${item.winrate_pct >= 50 ? 'winrate' : ''}">${utils.formatWinrate(item.winrate_pct)}</span>
+                            <span class="item-stat-value ${item.winrate_with_item >= 50 ? 'winrate' : ''}">${utils.formatWinrate(item.winrate_with_item)}</span>
                         </span>
                     </div>
                 </div>

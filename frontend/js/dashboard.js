@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await triggerAutoUpdate();
 
     await loadGlobalStats();
+    await loadRankedRanking();
     await loadRanking();
     await loadPlayers();
     await loadPopularItems();
@@ -31,6 +32,7 @@ async function triggerAutoUpdate() {
 // Rafraichir toutes les donnees
 async function refreshAllData() {
     await loadGlobalStats();
+    await loadRankedRanking();
     await loadRanking();
     await loadPlayers();
     await loadPopularItems();
@@ -50,7 +52,56 @@ async function loadGlobalStats() {
     }
 }
 
-// Charger le classement
+// Charger le classement SoloQ (rangs officiels)
+async function loadRankedRanking() {
+    try {
+        const ranking = await API.getRankedRanking();
+        const container = document.getElementById('rankedRankingContainer');
+
+        if (!ranking || ranking.length === 0) {
+            container.innerHTML = '<div class="loading">Aucun rang disponible</div>';
+            return;
+        }
+
+        container.innerHTML = ranking.map(player => `
+            <div class="ranked-card" onclick="goToPlayer(${player.player_id})">
+                <div class="ranked-position">#${player.position}</div>
+                <div class="ranked-emblem">
+                    ${player.tier !== 'UNRANKED' ?
+                        `<img src="${utils.getTierEmblem(player.tier)}"
+                              alt="${player.tier}"
+                              onerror="this.style.display='none'">` :
+                        '<span class="unranked-icon">?</span>'
+                    }
+                </div>
+                <div class="ranked-info">
+                    <div class="ranked-player-name">${player.display_name}</div>
+                    <div class="ranked-tier" style="color: ${utils.getTierColor(player.tier)}">
+                        ${utils.formatRank(player.tier, player.rank)}
+                        ${player.tier !== 'UNRANKED' ? `<span class="ranked-lp">${player.lp} LP</span>` : ''}
+                    </div>
+                </div>
+                <div class="ranked-stats">
+                    ${player.tier !== 'UNRANKED' ? `
+                        <div class="ranked-record">
+                            <span class="wins">${player.wins}W</span>
+                            <span class="losses">${player.losses}L</span>
+                        </div>
+                        <div class="ranked-winrate ${player.winrate >= 50 ? 'positive' : 'negative'}">
+                            ${utils.formatWinrate(player.winrate)}
+                        </div>
+                    ` : '<div class="ranked-unranked">Non classé</div>'}
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Erreur chargement ranking ranked:', error);
+        document.getElementById('rankedRankingContainer').innerHTML =
+            '<div class="loading">Erreur lors du chargement des rangs</div>';
+    }
+}
+
+// Charger le classement performance
 async function loadRanking() {
     try {
         const ranking = await API.getRanking();
@@ -166,9 +217,9 @@ async function loadPopularItems() {
         container.innerHTML = items.map(item => `
             <div class="item-card">
                 <div class="item-icon">
-                    <img src="https://ddragon.leagueoflegends.com/cdn/14.1.1/img/item/${item.item_id}.png"
+                    <img src="https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/${item.item_id}.png"
                          alt="${item.item_name}"
-                         onerror="this.src='https://ddragon.leagueoflegends.com/cdn/14.1.1/img/item/0.png'">
+                         onerror="this.src='https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/0.png'">
                 </div>
                 <div class="item-info">
                     <div class="item-name">${item.item_name}</div>

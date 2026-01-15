@@ -35,6 +35,10 @@ const API = {
         return this.get(API_ENDPOINTS.ranking);
     },
 
+    async getRankedRanking() {
+        return this.get(API_ENDPOINTS.rankedRanking);
+    },
+
     // DuoQ
     async getDuoQ() {
         return this.get(API_ENDPOINTS.duoq);
