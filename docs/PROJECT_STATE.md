@@ -1,29 +1,33 @@
-# PROJECT STATE – LoL Analytics
+# PROJECT STATE - LoL Analytics
 
 ## Objectif
-Analytics privé League of Legends pour 7 joueurs :
+Analytics prive League of Legends pour 8 joueurs :
 ranking interne, stats individuelles, synergies DuoQ, dashboard dark, auto-update.
 
 ## Stack
-PostgreSQL 15 · Python 3.11 · FastAPI · Vanilla JS (no Node).
+PostgreSQL 15 - Python 3.11 - FastAPI - Vanilla JS (no Node).
 
-## Deploiement PRODUCTION ✅
+## Deploiement PRODUCTION
 - **URL** : `https://lol-data-api.onrender.com`
 - **API** : Render (Web Service)
 - **DB** : Supabase PostgreSQL (pooler port 6543)
 - **Frontend** : Servi par FastAPI (meme origine)
 
+## Joueurs Tracked (8)
+Nawfou, Nawlol, Reaper, Shore, FlaqueDepisse, Me no murderer, Viirtu, T1 KRKING
+- Config : `config/players.py` (TRACKED_PLAYERS)
+- Ranking SoloQ utilise TRACKED_PLAYERS comme source (pas dim_player)
+
 ## Donnees actives
-- 574 matchs total (migres sur Supabase)
-- 633 entries fact_player_match
-- 7 joueurs
+- ~600+ matchs (Supabase)
+- 8 joueurs tracked
 - Filtre actif : patch 16.1 + date >= 2026-01-08
 
 ## Fonctionnalites OK
 - Dashboard global (stats, classements, items populaires)
-- Classement SoloQ (rangs officiels Riot)
+- Classement SoloQ (rangs officiels Riot) - affiche TOUS les joueurs tracked
 - Classement Performance (score composite)
-- Profil joueur (stats, champions, roles, items)
+- Profil joueur (stats, champions expandables avec items, roles, items)
 - Comparateur 2 joueurs
 - DuoQ Matrix + synergies
 - Auto-update (10 min)
@@ -34,18 +38,17 @@ PostgreSQL 15 · Python 3.11 · FastAPI · Vanilla JS (no Node).
 - Calculs analytiques exclusivement en SQL (vues)
 - Frontend servi via FileResponse + StaticFiles
 
-## Commits recents (deploiement)
-- `9573f20` - Sync frontend files
-- `0fa4719` - Fix API_BASE_URL relative
-- `a80d8b4` - Serve frontend from API
-- `858e881` - Fix riot_api.py import crash
-- `85bd4f1` - Fix StaticFiles overriding routes
+## Vues SQL (9 total)
+- player_stats, player_champions, player_stats_by_role
+- player_ranking, duoq_synergies, popular_items
+- recent_matches, player_items, player_champion_items (NEW)
 
 ## Configuration requise (Render Environment)
 - `DATABASE_URL` : URL Supabase pooler (port 6543)
-- `RIOT_API_KEY` : Optionnel (pour /ranking/ranked live)
+- `RIOT_API_KEY` : Requis pour /ranking/ranked
 
 ## Source de verite
-- Vues SQL dans `riot_analytics` (8 vues)
+- Vues SQL dans `riot_analytics`
 - Filtres patch/date appliques dans les vues
 - Tables dans `riot_dim` et `riot_fact`
+- TRACKED_PLAYERS pour liste joueurs (pas DB)

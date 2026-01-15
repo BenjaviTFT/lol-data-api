@@ -9,17 +9,19 @@
 | `/health` | GET | Healthcheck |
 | `/health/db` | GET | Test connexion DB (diagnostic) |
 | `/players` | GET | Liste tous les joueurs |
-| `/players/{id}` | GET | Détail d'un joueur |
+| `/players/{id}` | GET | Detail d'un joueur |
 | `/players/{id}/champions` | GET | Champions du joueur |
-| `/players/{id}/roles` | GET | Rôles du joueur |
-| `/players/{id}/items` | GET | Items du joueur |
-| `/ranking` | GET | Classement performance (basé sur score composite) |
+| `/players/{id}/roles` | GET | Roles du joueur |
+| `/players/{id}/items` | GET | Items du joueur (param: `limit`) |
+| `/players/{id}/champions/{champ_id}/items` | GET | Items par champion (NEW) |
+| `/players/{id}/builds` | GET | Top item par champion (NEW) |
+| `/ranking` | GET | Classement performance (score composite) |
 | `/ranking/ranked` | GET | Classement SoloQ (rangs officiels Riot) |
 | `/duoq` | GET | Stats duo |
 | `/stats/global` | GET | Stats globales |
 | `/items/popular` | GET | Items populaires (param: `limit`) |
-| `/update` | POST | Déclenche mise à jour données |
-| `/update/status` | GET | Statut de mise à jour |
+| `/update` | POST | Declenche mise a jour donnees |
+| `/update/status` | GET | Statut de mise a jour |
 
 ## Conventions
 

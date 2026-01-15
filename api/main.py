@@ -161,9 +161,21 @@ def get_popular_items(limit: int = 20):
 
 
 @app.get("/players/{player_id}/items", response_model=List[PlayerItem])
-def get_player_items(player_id: int):
+def get_player_items(player_id: int, limit: int = 20):
     """Recupere les items utilises par un joueur"""
-    return ItemService.get_by_player(player_id)
+    return ItemService.get_by_player(player_id, limit)
+
+
+@app.get("/players/{player_id}/champions/{champion_id}/items")
+def get_player_champion_items(player_id: int, champion_id: int):
+    """Recupere les items utilises par un joueur sur un champion specifique"""
+    return ItemService.get_by_player_champion(player_id, champion_id)
+
+
+@app.get("/players/{player_id}/builds")
+def get_player_builds(player_id: int):
+    """Recupere les builds (top items) pour chaque champion d'un joueur"""
+    return ItemService.get_champion_builds(player_id)
 
 
 # ============================================================

@@ -54,30 +54,42 @@ class RankService:
         """
         Recupere les rangs de tous les joueurs tracked
         Retourne une liste triee par rang (du plus haut au plus bas)
+
+        Utilise TRACKED_PLAYERS comme source principale pour s'assurer
+        que tous les joueurs apparaissent, meme sans matchs enregistres.
         """
+        # Recuperer les joueurs de la DB pour avoir les player_id
         try:
-            # Recuperer les player_id et display_name depuis la base
             players_db = execute_query("""
-                SELECT player_id, summoner_name as display_name, puuid
+                SELECT player_id, summoner_name as display_name, puuid, tag_line
                 FROM riot_dim.dim_player
                 WHERE puuid IS NOT NULL
             """)
+            db_by_puuid = {p["puuid"]: p for p in players_db}
         except Exception as e:
             print(f"Erreur requete DB: {e}")
-            return []
+            db_by_puuid = {}
 
         results = []
+        processed_puuids = set()
 
-        for player in players_db:
-            puuid = player.get("puuid")
-            if not puuid:
+        # Parcourir tous les TRACKED_PLAYERS pour s'assurer qu'ils apparaissent tous
+        for display_name, puuid in TRACKED_PLAYERS.items():
+            if puuid in processed_puuids:
                 continue
+            processed_puuids.add(puuid)
+
+            # Recuperer les infos DB si disponibles
+            db_player = db_by_puuid.get(puuid)
+            player_id = db_player["player_id"] if db_player else None
+            # Utiliser le nom de la config (plus fiable)
+            name = display_name.split("#")[0]  # "FlaqueDepisse#11223" -> "FlaqueDepisse"
 
             try:
-                # Determiner la region (par defaut EUW)
+                # Determiner la region
                 region = "euw1"
-                # Pour les joueurs KR/JP, adapter la region
-                if "KRJPN" in str(player.get("display_name", "")):
+                tag = display_name.split("#")[1] if "#" in display_name else ""
+                if "KRJPN" in tag or "KR" in tag:
                     region = "kr"
 
                 rank_data = get_player_rank(puuid, region)
@@ -89,8 +101,8 @@ class RankService:
                         rank_data["lp"]
                     )
                     results.append({
-                        "player_id": player["player_id"],
-                        "display_name": player["display_name"],
+                        "player_id": player_id or 0,
+                        "display_name": name,
                         "tier": rank_data["tier"],
                         "rank": rank_data["rank"],
                         "lp": rank_data["lp"],
@@ -102,8 +114,8 @@ class RankService:
                 else:
                     # Joueur sans rang (unranked)
                     results.append({
-                        "player_id": player["player_id"],
-                        "display_name": player["display_name"],
+                        "player_id": player_id or 0,
+                        "display_name": name,
                         "tier": "UNRANKED",
                         "rank": "",
                         "lp": 0,
@@ -113,11 +125,11 @@ class RankService:
                         "score": -1
                     })
             except Exception as e:
-                print(f"Erreur pour joueur {player.get('display_name')}: {e}")
+                print(f"Erreur pour joueur {name}: {e}")
                 # Ajouter comme unranked en cas d'erreur
                 results.append({
-                    "player_id": player["player_id"],
-                    "display_name": player["display_name"],
+                    "player_id": player_id or 0,
+                    "display_name": name,
                     "tier": "UNRANKED",
                     "rank": "",
                     "lp": 0,

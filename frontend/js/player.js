@@ -124,19 +124,20 @@ async function loadPlayerChampions(playerId) {
 
         if (champions.length === 0) {
             document.getElementById('championsTableBody').innerHTML =
-                '<tr><td colspan="6" class="loading">Aucun champion joué</td></tr>';
+                '<tr><td colspan="6" class="loading">Aucun champion joue</td></tr>';
             return;
         }
 
-        // Table avec icones champions
+        // Table avec icones champions et rows expandables
         document.getElementById('championsTableBody').innerHTML = champions.map(champ => `
-            <tr>
+            <tr class="champion-row" data-champion-id="${champ.champion_id}" data-player-id="${playerId}">
                 <td class="champion-cell">
                     <img class="champion-icon"
                          src="https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/${champ.champion_key}.png"
                          alt="${champ.champion_name}"
                          onerror="this.style.display='none'">
                     <span class="champion-name">${champ.champion_name}</span>
+                    <span class="expand-icon">▼</span>
                 </td>
                 <td>${champ.games_played}</td>
                 <td>
@@ -148,13 +149,69 @@ async function loadPlayerChampions(playerId) {
                 <td>${champ.avg_cs_per_min}</td>
                 <td>${utils.formatNumber(champ.avg_dpm)}</td>
             </tr>
+            <tr class="champion-items-row" id="items-${champ.champion_id}">
+                <td colspan="6" class="champion-items-cell">
+                    <div class="champion-items-container" id="items-container-${champ.champion_id}">
+                        <span class="loading">Chargement des items...</span>
+                    </div>
+                </td>
+            </tr>
         `).join('');
 
-        // Créer le chart (top 5)
+        // Ajouter les event listeners pour expand/collapse
+        document.querySelectorAll('.champion-row').forEach(row => {
+            row.addEventListener('click', toggleChampionItems);
+        });
+
+        // Creer le chart (top 5)
         createChampionsChart(champions.slice(0, 5));
 
     } catch (error) {
         console.error('Erreur chargement champions:', error);
+    }
+}
+
+// Toggle l'affichage des items d'un champion
+async function toggleChampionItems(event) {
+    const row = event.currentTarget;
+    const championId = row.dataset.championId;
+    const playerId = row.dataset.playerId;
+    const itemsRow = document.getElementById(`items-${championId}`);
+    const itemsContainer = document.getElementById(`items-container-${championId}`);
+
+    // Toggle expanded state
+    row.classList.toggle('expanded');
+    itemsRow.classList.toggle('visible');
+
+    // Si on ouvre et qu'on n'a pas encore charge les items
+    if (itemsRow.classList.contains('visible') && itemsContainer.querySelector('.loading')) {
+        try {
+            const items = await API.getPlayerChampionItems(playerId, championId);
+
+            if (items && items.length > 0) {
+                itemsContainer.innerHTML = items.map(item => `
+                    <div class="champion-item-badge">
+                        <img src="https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/${item.item_id}.png"
+                             alt="${item.item_name}"
+                             onerror="this.src='https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/0.png'">
+                        <div class="champion-item-info">
+                            <span class="champion-item-name">${item.item_name}</span>
+                            <span class="champion-item-stats">
+                                ${item.times_bought}x -
+                                <span class="${item.winrate_with_item >= 50 ? 'winrate-positive' : 'winrate-negative'}">
+                                    ${utils.formatWinrate(item.winrate_with_item)}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                itemsContainer.innerHTML = '<span class="loading">Aucun item enregistre</span>';
+            }
+        } catch (error) {
+            console.error('Erreur chargement items champion:', error);
+            itemsContainer.innerHTML = '<span class="loading">Erreur de chargement</span>';
+        }
     }
 }
 

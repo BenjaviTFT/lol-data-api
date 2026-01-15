@@ -63,14 +63,18 @@ async function loadRankedRanking() {
             return;
         }
 
-        container.innerHTML = ranking.map(player => `
-            <div class="ranked-card" onclick="goToPlayer(${player.player_id})">
+        container.innerHTML = ranking.map(player => {
+            const tierClass = player.tier !== 'UNRANKED' ? `tier-${player.tier.toLowerCase()}` : '';
+            const clickHandler = player.player_id > 0 ? `onclick="goToPlayer(${player.player_id})"` : '';
+
+            return `
+            <div class="ranked-card ${tierClass}" ${clickHandler}>
                 <div class="ranked-position">#${player.position}</div>
                 <div class="ranked-emblem">
                     ${player.tier !== 'UNRANKED' ?
                         `<img src="${utils.getTierEmblem(player.tier)}"
                               alt="${player.tier}"
-                              onerror="this.style.display='none'">` :
+                              onerror="this.parentElement.innerHTML='<span class=\\'unranked-icon\\'>${player.tier.charAt(0)}</span>'">` :
                         '<span class="unranked-icon">?</span>'
                     }
                 </div>
@@ -90,10 +94,10 @@ async function loadRankedRanking() {
                         <div class="ranked-winrate ${player.winrate >= 50 ? 'positive' : 'negative'}">
                             ${utils.formatWinrate(player.winrate)}
                         </div>
-                    ` : '<div class="ranked-unranked">Non classé</div>'}
+                    ` : '<div class="ranked-unranked">Non classe</div>'}
                 </div>
             </div>
-        `).join('');
+        `}).join('');
     } catch (error) {
         console.error('Erreur chargement ranking ranked:', error);
         document.getElementById('rankedRankingContainer').innerHTML =

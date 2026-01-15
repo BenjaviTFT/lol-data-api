@@ -15,7 +15,9 @@ const API_ENDPOINTS = {
     playerRoles: (id) => `${API_BASE_URL}/players/${id}/roles`,
     // Items
     popularItems: `${API_BASE_URL}/items/popular`,
-    playerItems: (id) => `${API_BASE_URL}/players/${id}/items`
+    playerItems: (id) => `${API_BASE_URL}/players/${id}/items`,
+    playerChampionItems: (playerId, champId) => `${API_BASE_URL}/players/${playerId}/champions/${champId}/items`,
+    playerBuilds: (id) => `${API_BASE_URL}/players/${id}/builds`
 };
 
 // Utilitaires
@@ -61,8 +63,16 @@ const utils = {
         return colors[tier] || '#666';
     },
 
-    // URL de l'embleme du tier
+    // URL de l'embleme du tier (utilise les PNG officiels plus fiables)
     getTierEmblem: (tier) => {
+        if (tier === 'UNRANKED') return '';
+        // Utiliser les emblemes PNG de Data Dragon (plus fiable que les SVG)
+        const tierLower = tier.toLowerCase();
+        return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-${tierLower}.png`;
+    },
+
+    // URL alternative pour les mini-crests
+    getTierMiniCrest: (tier) => {
         if (tier === 'UNRANKED') return '';
         return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/${tier.toLowerCase()}.svg`;
     }

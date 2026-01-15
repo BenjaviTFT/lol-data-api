@@ -195,6 +195,91 @@ canvas {
     font-weight: 700;
 }
 
+/* Champion row expandable */
+.champion-row {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.champion-row:hover {
+    background: var(--bg-hover);
+}
+
+.champion-row.expanded {
+    background: var(--bg-secondary);
+}
+
+.champion-items-row {
+    display: none;
+}
+
+.champion-items-row.visible {
+    display: table-row;
+}
+
+.champion-items-cell {
+    padding: 1rem !important;
+    background: var(--bg-secondary);
+}
+
+.champion-items-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+}
+
+.champion-item-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+}
+
+.champion-item-badge img {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+}
+
+.champion-item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.champion-item-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.champion-item-stats {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.champion-item-stats .winrate-positive {
+    color: var(--accent-success);
+}
+
+.champion-item-stats .winrate-negative {
+    color: var(--accent-danger);
+}
+
+.expand-icon {
+    display: inline-block;
+    transition: transform 0.2s;
+    margin-left: 0.5rem;
+    color: var(--text-muted);
+}
+
+.champion-row.expanded .expand-icon {
+    transform: rotate(180deg);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .player-profile-stats {
@@ -213,5 +298,9 @@ canvas {
     .champions-table th,
     .champions-table td {
         padding: 0.75rem 0.5rem;
+    }
+
+    .champion-items-container {
+        flex-direction: column;
     }
 }

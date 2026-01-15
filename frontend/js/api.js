@@ -58,7 +58,15 @@ const API = {
         return this.get(`${API_ENDPOINTS.popularItems}?limit=${limit}`);
     },
 
-    async getPlayerItems(id) {
-        return this.get(API_ENDPOINTS.playerItems(id));
+    async getPlayerItems(id, limit = 20) {
+        return this.get(`${API_ENDPOINTS.playerItems(id)}?limit=${limit}`);
+    },
+
+    async getPlayerChampionItems(playerId, championId) {
+        return this.get(API_ENDPOINTS.playerChampionItems(playerId, championId));
+    },
+
+    async getPlayerBuilds(id) {
+        return this.get(API_ENDPOINTS.playerBuilds(id));
     }
 };

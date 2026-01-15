@@ -124,3 +124,19 @@ class PlayerRankedInfo(BaseModel):
     losses: int
     winrate: float
     score: int
+
+
+class ChampionItemBuild(BaseModel):
+    item_id: int
+    item_name: str
+    times_bought: int
+    winrate_with_item: float
+
+
+class PlayerChampionItems(BaseModel):
+    champion_id: int
+    champion_name: str
+    item_id: int
+    item_name: str
+    times_bought: int
+    winrate_with_item: float
