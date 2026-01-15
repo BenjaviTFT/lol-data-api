@@ -7,11 +7,13 @@ from api.services.match_service import MatchService
 from api.services.duoq_service import DuoQService
 from api.services.item_service import ItemService
 from api.services.update_service import UpdateService
+from api.services.rank_service import RankService
 
 __all__ = [
     "PlayerService",
     "MatchService",
     "DuoQService",
     "ItemService",
-    "UpdateService"
+    "UpdateService",
+    "RankService"
 ]
