@@ -1,10 +1,12 @@
 // Configuration de l'API
-const API_BASE_URL = 'http://127.0.0.1:8000';
+// Utilise l'URL relative (meme origine) - fonctionne en local et en prod
+const API_BASE_URL = '';
 
 // Endpoints
 const API_ENDPOINTS = {
     players: `${API_BASE_URL}/players`,
     ranking: `${API_BASE_URL}/ranking`,
+    rankedRanking: `${API_BASE_URL}/ranking/ranked`,
     duoq: `${API_BASE_URL}/duoq`,
     globalStats: `${API_BASE_URL}/stats/global`,
     recentMatches: `${API_BASE_URL}/matches/recent`,
@@ -33,5 +35,35 @@ const utils = {
         if (rank === 2) return 'silver';
         if (rank === 3) return 'bronze';
         return 'default';
+    },
+
+    // Formatage du rang ranked
+    formatRank: (tier, rank) => {
+        if (tier === 'UNRANKED') return 'Unranked';
+        return `${tier.charAt(0)}${tier.slice(1).toLowerCase()} ${rank}`;
+    },
+
+    // Couleur du tier
+    getTierColor: (tier) => {
+        const colors = {
+            'CHALLENGER': '#f4c874',
+            'GRANDMASTER': '#cd3d45',
+            'MASTER': '#9d48e0',
+            'DIAMOND': '#576cbd',
+            'EMERALD': '#0fa94d',
+            'PLATINUM': '#4e9996',
+            'GOLD': '#cd8837',
+            'SILVER': '#80989d',
+            'BRONZE': '#8c523a',
+            'IRON': '#5e5550',
+            'UNRANKED': '#666'
+        };
+        return colors[tier] || '#666';
+    },
+
+    // URL de l'embleme du tier
+    getTierEmblem: (tier) => {
+        if (tier === 'UNRANKED') return '';
+        return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/${tier.toLowerCase()}.svg`;
     }
 };
