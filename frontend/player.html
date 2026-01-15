@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoL Analytics - Profil Joueur</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/player.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>⚔️ LoL Analytics</h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Dashboard</a>
+                <a href="comparator.html" class="nav-link">Comparateur</a>
+                <a href="duoq.html" class="nav-link">DuoQ Matrix</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+
+        <!-- Player Header -->
+        <div class="player-profile-header" id="playerHeader">
+            <div class="loading">Chargement du profil...</div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="section">
+            <div class="section-header">
+                <h2>📊 Vue d'ensemble</h2>
+            </div>
+            <div class="stats-grid" id="playerStatsGrid">
+                <div class="loading">Chargement...</div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-row">
+            <!-- Performance Radar -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3>⚡ Performance Globale</h3>
+                </div>
+                <canvas id="radarChart"></canvas>
+            </div>
+
+            <!-- Champions Distribution -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3>🏆 Top Champions</h3>
+                </div>
+                <canvas id="championsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Champions Table -->
+        <div class="section">
+            <div class="section-header">
+                <h2>🎮 Pool de Champions</h2>
+                <div class="section-subtitle">Statistiques détaillées par champion</div>
+            </div>
+            <div class="table-container">
+                <table class="champions-table" id="championsTable">
+                    <thead>
+                        <tr>
+                            <th>Champion</th>
+                            <th>Games</th>
+                            <th>Winrate</th>
+                            <th>KDA</th>
+                            <th>CS/min</th>
+                            <th>DPM</th>
+                        </tr>
+                    </thead>
+                    <tbody id="championsTableBody">
+                        <tr><td colspan="6" class="loading">Chargement...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Roles Distribution -->
+        <div class="section">
+            <div class="section-header">
+                <h2>🎯 Performance par Rôle</h2>
+            </div>
+            <div class="roles-grid" id="rolesGrid">
+                <div class="loading">Chargement...</div>
+            </div>
+        </div>
+
+        <!-- Items Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>🛡️ Items Favoris</h2>
+                <div class="section-subtitle">Items les plus achetés par ce joueur</div>
+            </div>
+            <div class="items-grid" id="playerItemsGrid">
+                <div class="loading">Chargement des items...</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/player.js"></script>
+</body>
+</html>

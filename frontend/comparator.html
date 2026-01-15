@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoL Analytics - Comparateur</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/comparator.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>⚔️ LoL Analytics</h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Dashboard</a>
+                <a href="comparator.html" class="nav-link active">Comparateur</a>
+                <a href="duoq.html" class="nav-link">DuoQ Matrix</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+
+        <div class="section">
+            <div class="section-header">
+                <h2>⚖️ Comparateur de Joueurs</h2>
+                <div class="section-subtitle">Comparez les performances de deux joueurs côte à côte</div>
+            </div>
+
+            <!-- Player Selection -->
+            <div class="selector-container">
+                <div class="player-selector">
+                    <label for="player1Select">Joueur 1</label>
+                    <select id="player1Select" class="player-select" onchange="onPlayerChange()">
+                        <option value="">Sélectionner un joueur...</option>
+                    </select>
+                </div>
+
+                <div class="vs-badge">VS</div>
+
+                <div class="player-selector">
+                    <label for="player2Select">Joueur 2</label>
+                    <select id="player2Select" class="player-select" onchange="onPlayerChange()">
+                        <option value="">Sélectionner un joueur...</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Result -->
+        <div id="comparisonContainer" style="display: none;">
+
+            <!-- Radar Chart Comparison -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>📊 Comparaison Globale</h2>
+                </div>
+                <div class="chart-container large">
+                    <canvas id="comparisonRadar"></canvas>
+                </div>
+            </div>
+
+            <!-- Stats Comparison Grid -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>📈 Statistiques Détaillées</h2>
+                </div>
+                <div class="comparison-grid" id="comparisonGrid">
+                    <!-- Stats will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Side by Side Stats -->
+            <div class="section">
+                <div class="section-header">
+                    <h2>🔢 Face à Face</h2>
+                </div>
+                <div class="face-to-face" id="faceToFace">
+                    <!-- Comparison bars will be inserted here -->
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/comparator.js"></script>
+</body>
+</html>

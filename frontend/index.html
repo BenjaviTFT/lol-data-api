@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoL Analytics - Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>⚔️ LoL Analytics</h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link active">Dashboard</a>
+                <a href="comparator.html" class="nav-link">Comparateur</a>
+                <a href="duoq.html" class="nav-link">DuoQ Matrix</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-content">
+                    <div class="stat-label">Joueurs</div>
+                    <div class="stat-value" id="totalPlayers">-</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎮</div>
+                <div class="stat-content">
+                    <div class="stat-label">Total Games</div>
+                    <div class="stat-value" id="totalGames">-</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-content">
+                    <div class="stat-label">Winrate Global</div>
+                    <div class="stat-value" id="avgWinrate">-</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⚔️</div>
+                <div class="stat-content">
+                    <div class="stat-label">KDA Moyen</div>
+                    <div class="stat-value" id="avgKDA">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ranking Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>🏆 Classement Interne</h2>
+                <div class="section-subtitle">Score composite basé sur performances globales</div>
+            </div>
+            <div class="ranking-container" id="rankingContainer">
+                <!-- Chargement -->
+                <div class="loading">Chargement du classement...</div>
+            </div>
+        </div>
+
+        <!-- Players Grid -->
+        <div class="section">
+            <div class="section-header">
+                <h2>👥 Profils Joueurs</h2>
+                <div class="section-subtitle">Cliquez sur un joueur pour voir son profil détaillé</div>
+            </div>
+            <div class="players-grid" id="playersGrid">
+                <div class="loading">Chargement des joueurs...</div>
+            </div>
+        </div>
+
+        <!-- Popular Items -->
+        <div class="section">
+            <div class="section-header">
+                <h2>🛡️ Items Populaires</h2>
+                <div class="section-subtitle">Items les plus achetés par le groupe</div>
+            </div>
+            <div class="items-grid" id="itemsGrid">
+                <div class="loading">Chargement des items...</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

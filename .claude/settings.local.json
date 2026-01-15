@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python main.py:*)",
+      "Bash(python test_db.py:*)",
+      "Bash(python db/add_items_column.py:*)"
+    ]
+  }
+}

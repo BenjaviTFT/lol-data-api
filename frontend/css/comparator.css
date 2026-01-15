@@ -1,0 +1,226 @@
+/* Comparateur - Styles */
+
+.selector-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 2rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+}
+
+.player-selector {
+    flex: 1;
+    max-width: 400px;
+}
+
+.player-selector label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.player-select {
+    width: 100%;
+    padding: 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.player-select:hover {
+    border-color: var(--accent-primary);
+}
+
+.player-select:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.vs-badge {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+    box-shadow: var(--shadow-lg);
+    flex-shrink: 0;
+}
+
+/* Chart Large */
+.chart-container.large {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+}
+
+/* Comparison Grid */
+.comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.comparison-stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.comparison-stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+}
+
+.comparison-stat-values {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 1rem;
+}
+
+.comparison-value {
+    display: flex;
+    flex-direction: column;
+}
+
+.comparison-player-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.comparison-value-number {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.comparison-value-number.winner {
+    color: var(--accent-success);
+}
+
+.comparison-value-number.loser {
+    color: var(--text-secondary);
+}
+
+/* Face to Face */
+.face-to-face {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.comparison-bar {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.comparison-bar-label {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+}
+
+.comparison-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.comparison-bar-player {
+    flex: 1;
+    text-align: center;
+}
+
+.comparison-bar-name {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.comparison-bar-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.comparison-bar-track {
+    flex: 2;
+    height: 40px;
+    background: var(--bg-secondary);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+}
+
+.comparison-bar-fill-left {
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 1rem;
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: width 0.5s ease;
+}
+
+.comparison-bar-fill-right {
+    background: linear-gradient(90deg, var(--accent-warning), var(--accent-danger));
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 1rem;
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: width 0.5s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .selector-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .player-selector {
+        max-width: 100%;
+    }
+
+    .vs-badge {
+        align-self: center;
+    }
+
+    .comparison-stat-values {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+}

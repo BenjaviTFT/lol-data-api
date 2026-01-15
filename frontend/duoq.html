@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoL Analytics - DuoQ Matrix</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/duoq.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>⚔️ LoL Analytics</h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Dashboard</a>
+                <a href="comparator.html" class="nav-link">Comparateur</a>
+                <a href="duoq.html" class="nav-link active">DuoQ Matrix</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container main-content">
+
+        <div class="section">
+            <div class="section-header">
+                <h2>🤝 Matrice DuoQ</h2>
+                <div class="section-subtitle">Synergies et performances en duo</div>
+            </div>
+
+            <!-- Synergies Grid -->
+            <div class="duoq-matrix-container">
+                <div class="matrix-loading" id="matrixLoading">
+                    <div class="loading">Chargement de la matrice...</div>
+                </div>
+                <div class="duoq-matrix" id="duoqMatrix" style="display: none;">
+                    <!-- Matrix will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Top DuoQ -->
+        <div class="section">
+            <div class="section-header">
+                <h2>🏆 Top Synergies</h2>
+                <div class="section-subtitle">Les meilleures paires de joueurs</div>
+            </div>
+            <div class="duoq-list" id="duoqList">
+                <div class="loading">Chargement...</div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="section">
+            <div class="legend-container">
+                <h3>📖 Légende</h3>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #10b981, #059669);"></div>
+                        <span>Excellente synergie (≥ 70% WR)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);"></div>
+                        <span>Bonne synergie (50-70% WR)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(135deg, #f59e0b, #d97706);"></div>
+                        <span>Synergie moyenne (< 50% WR)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: var(--bg-secondary); border: 1px solid var(--border-color);"></div>
+                        <span>Aucune game ensemble</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/duoq.js"></script>
+</body>
+</html>

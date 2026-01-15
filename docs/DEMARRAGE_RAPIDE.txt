@@ -1,0 +1,60 @@
+=============================================================================
+   DEMARRAGE RAPIDE - LOL ANALYTICS
+=============================================================================
+
+1. LANCER LE BACKEND (Terminal 1)
+   python api/main.py
+
+2. LANCER LE FRONTEND (Terminal 2)
+   cd frontend
+   python -m http.server 8080
+
+3. OUVRIR LE SITE
+   http://localhost:8080
+
+=============================================================================
+   MISE A JOUR AUTOMATIQUE
+=============================================================================
+
+Le site se met a jour automatiquement :
+- Au chargement de la page
+- Toutes les 10 minutes (page ouverte)
+
+Plus besoin de lancer manuellement les updates !
+
+=============================================================================
+   FILTRES APPLIQUES
+=============================================================================
+
+- Patch 16.1 uniquement
+- Dates >= 08/01/2026
+
+Pour changer :
+1. Ouvrir db/create_analytics_views_patch_filtered.sql
+2. Modifier '16.1%' et '2026-01-08'
+3. Lancer : python scripts/apply_patch_filter.py
+
+=============================================================================
+   AJOUTER UN JOUEUR
+=============================================================================
+
+Double-clic : add_player.bat
+
+Puis : python ingest_all_players.py
+
+=============================================================================
+   VERIFIER L'ETAT
+=============================================================================
+
+python scripts/check_filtered_data.py
+
+=============================================================================
+   DOCUMENTATION COMPLETE
+=============================================================================
+
+- QUICK_START.md         - Commandes essentielles
+- AUTO_UPDATE_GUIDE.md   - Guide des mises a jour auto
+- SESSION_RECAP.md       - Recap de la session
+- UPDATE_GUIDE.md        - Guide complet de gestion
+
+=============================================================================
