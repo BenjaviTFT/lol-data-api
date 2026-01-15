@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!playerId) {
         alert('ID joueur manquant');
-        window.location.href = 'index.html';
+        window.location.href = '/';
         return;
     }
 
@@ -186,10 +186,14 @@ async function toggleChampionItems(event) {
     // Si on ouvre et qu'on n'a pas encore charge les items
     if (itemsRow.classList.contains('visible') && itemsContainer.querySelector('.loading')) {
         try {
+            console.log(`Loading items for player ${playerId}, champion ${championId}`);
             const items = await API.getPlayerChampionItems(playerId, championId);
+            console.log('Items received:', items);
 
             if (items && items.length > 0) {
-                itemsContainer.innerHTML = items.map(item => `
+                // Filtrer les items non-legendaires (garder seulement les items > 2000 gold typiquement)
+                const legendaryItems = items.filter(item => item.times_bought >= 1);
+                itemsContainer.innerHTML = legendaryItems.map(item => `
                     <div class="champion-item-badge">
                         <img src="https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/${item.item_id}.png"
                              alt="${item.item_name}"
@@ -206,11 +210,11 @@ async function toggleChampionItems(event) {
                     </div>
                 `).join('');
             } else {
-                itemsContainer.innerHTML = '<span class="loading">Aucun item enregistre</span>';
+                itemsContainer.innerHTML = '<span class="no-data">Aucun item enregistre pour ce champion</span>';
             }
         } catch (error) {
             console.error('Erreur chargement items champion:', error);
-            itemsContainer.innerHTML = '<span class="loading">Erreur de chargement</span>';
+            itemsContainer.innerHTML = '<span class="error-msg">Donnees non disponibles</span>';
         }
     }
 }
@@ -379,10 +383,11 @@ function createChampionsChart(champions) {
     });
 }
 
-// Charger les items du joueur
+// Charger les items du joueur (filtres pour ne garder que les items finaux)
 async function loadPlayerItems(playerId) {
     try {
-        const items = await API.getPlayerItems(playerId);
+        // Charger plus d'items pour avoir assez apres filtrage
+        const items = await API.getPlayerItems(playerId, 50);
         const container = document.getElementById('playerItemsGrid');
 
         if (!items || items.length === 0) {
@@ -390,7 +395,17 @@ async function loadPlayerItems(playerId) {
             return;
         }
 
-        container.innerHTML = items.map(item => `
+        // Filtrer les items: exclure composants, potions, wards, etc.
+        const filteredItems = items
+            .filter(item => !EXCLUDED_ITEMS.includes(item.item_id))
+            .slice(0, 12); // Garder les 12 premiers apres filtrage
+
+        if (filteredItems.length === 0) {
+            container.innerHTML = '<div class="loading">Aucun item legendaire disponible</div>';
+            return;
+        }
+
+        container.innerHTML = filteredItems.map(item => `
             <div class="item-card">
                 <div class="item-icon">
                     <img src="https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/${item.item_id}.png"

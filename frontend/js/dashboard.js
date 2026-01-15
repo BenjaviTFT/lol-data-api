@@ -207,10 +207,11 @@ function goToPlayer(playerId) {
     window.location.href = `player.html?id=${playerId}`;
 }
 
-// Charger les items populaires
+// Charger les items populaires (filtres pour ne garder que les items finaux)
 async function loadPopularItems() {
     try {
-        const items = await API.getPopularItems(12);
+        // Charger plus d'items pour avoir assez apres filtrage
+        const items = await API.getPopularItems(50);
         const container = document.getElementById('itemsGrid');
 
         if (!items || items.length === 0) {
@@ -218,7 +219,17 @@ async function loadPopularItems() {
             return;
         }
 
-        container.innerHTML = items.map(item => `
+        // Filtrer les items: exclure composants, potions, wards, etc.
+        const filteredItems = items
+            .filter(item => !EXCLUDED_ITEMS.includes(item.item_id))
+            .slice(0, 12); // Garder les 12 premiers apres filtrage
+
+        if (filteredItems.length === 0) {
+            container.innerHTML = '<div class="loading">Aucun item legendaire disponible</div>';
+            return;
+        }
+
+        container.innerHTML = filteredItems.map(item => `
             <div class="item-card">
                 <div class="item-icon">
                     <img src="https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/${item.item_id}.png"

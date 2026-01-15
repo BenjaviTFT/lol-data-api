@@ -301,7 +301,8 @@ body {
     border: 2px solid var(--border-color);
     border-radius: 12px;
     padding: 1rem 1.5rem;
-    display: flex;
+    display: grid;
+    grid-template-columns: 50px 56px 1fr auto;
     align-items: center;
     gap: 1rem;
     transition: all 0.3s;
@@ -310,11 +311,11 @@ body {
 }
 
 /* Bordures colorees par tier */
-.ranked-card.tier-challenger { border-color: #f4c874; }
-.ranked-card.tier-grandmaster { border-color: #cd3d45; }
-.ranked-card.tier-master { border-color: #9d48e0; }
-.ranked-card.tier-diamond { border-color: #576cbd; }
-.ranked-card.tier-emerald { border-color: #0fa94d; }
+.ranked-card.tier-challenger { border-color: #f4c874; box-shadow: 0 0 10px rgba(244, 200, 116, 0.3); }
+.ranked-card.tier-grandmaster { border-color: #cd3d45; box-shadow: 0 0 10px rgba(205, 61, 69, 0.3); }
+.ranked-card.tier-master { border-color: #9d48e0; box-shadow: 0 0 10px rgba(157, 72, 224, 0.3); }
+.ranked-card.tier-diamond { border-color: #576cbd; box-shadow: 0 0 8px rgba(87, 108, 189, 0.25); }
+.ranked-card.tier-emerald { border-color: #0fa94d; box-shadow: 0 0 8px rgba(15, 169, 77, 0.25); }
 .ranked-card.tier-platinum { border-color: #4e9996; }
 .ranked-card.tier-gold { border-color: #cd8837; }
 .ranked-card.tier-silver { border-color: #80989d; }
@@ -329,14 +330,14 @@ body {
 .ranked-position {
     font-size: 1.5rem;
     font-weight: 800;
-    min-width: 50px;
     text-align: center;
+    color: var(--text-secondary);
 }
 
 /* Medailles pour les 3 premiers */
-.ranked-card:nth-child(1) .ranked-position { color: #f4c874; }
-.ranked-card:nth-child(2) .ranked-position { color: #c0c0c0; }
-.ranked-card:nth-child(3) .ranked-position { color: #cd7f32; }
+.ranked-card:nth-child(1) .ranked-position { color: #f4c874; text-shadow: 0 0 10px rgba(244, 200, 116, 0.5); }
+.ranked-card:nth-child(2) .ranked-position { color: #c0c0c0; text-shadow: 0 0 10px rgba(192, 192, 192, 0.5); }
+.ranked-card:nth-child(3) .ranked-position { color: #cd7f32; text-shadow: 0 0 10px rgba(205, 127, 50, 0.5); }
 
 .ranked-emblem {
     width: 56px;
@@ -363,7 +364,6 @@ body {
 }
 
 .ranked-info {
-    flex: 1;
     min-width: 0;
 }
 
@@ -371,6 +371,9 @@ body {
     font-size: 1.15rem;
     font-weight: 700;
     margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ranked-tier {
@@ -379,6 +382,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .ranked-lp {
@@ -395,6 +399,7 @@ body {
     flex-direction: column;
     align-items: flex-end;
     gap: 0.35rem;
+    min-width: 80px;
 }
 
 .ranked-record {
@@ -658,5 +663,32 @@ body {
     .rank-stats-row {
         flex-direction: column;
         gap: 0.5rem;
+    }
+
+    /* Ranked cards responsive */
+    .ranked-card {
+        grid-template-columns: 40px 48px 1fr;
+        padding: 0.75rem 1rem;
+    }
+
+    .ranked-stats {
+        display: none;
+    }
+
+    .ranked-position {
+        font-size: 1.2rem;
+    }
+
+    .ranked-emblem {
+        width: 48px;
+        height: 48px;
+    }
+
+    .ranked-player-name {
+        font-size: 1rem;
+    }
+
+    .ranked-tier {
+        font-size: 0.85rem;
     }
 }
