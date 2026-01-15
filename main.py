@@ -3,6 +3,9 @@ API FastAPI pour League of Legends Analytics
 """
 
 import sys
+import os
+import logging
+import traceback
 from pathlib import Path
 
 # Ajouter le repertoire parent au path pour les imports
@@ -13,6 +16,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from typing import List
 
+# Configuration logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 from api.models import (
     PlayerStats,
     PlayerChampion,
@@ -21,14 +31,16 @@ from api.models import (
     RecentMatch,
     PlayerStatsByRole,
     PopularItem,
-    PlayerItem
+    PlayerItem,
+    PlayerRankedInfo
 )
 from api.services import (
     PlayerService,
     MatchService,
     DuoQService,
     ItemService,
-    UpdateService
+    UpdateService,
+    RankService
 )
 
 # ============================================================
@@ -74,7 +86,15 @@ def root():
 @app.get("/players", response_model=List[PlayerStats])
 def get_players():
     """Recupere tous les joueurs avec leurs stats"""
-    return PlayerService.get_all()
+    try:
+        logger.info("GET /players called")
+        result = PlayerService.get_all()
+        logger.info(f"GET /players returned {len(result)} players")
+        return result
+    except Exception as e:
+        logger.error(f"GET /players error: {str(e)}")
+        logger.error(f"Full traceback:\n{traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/players/{player_id}", response_model=PlayerStats)
@@ -100,8 +120,14 @@ def get_player_roles(player_id: int):
 
 @app.get("/ranking", response_model=List[PlayerRanking])
 def get_ranking():
-    """Recupere le classement interne"""
+    """Recupere le classement interne (base sur performance)"""
     return PlayerService.get_ranking()
+
+
+@app.get("/ranking/ranked", response_model=List[PlayerRankedInfo])
+def get_ranked_ranking():
+    """Recupere le classement base sur les rangs SoloQ officiels"""
+    return RankService.get_all_ranks()
 
 
 # ============================================================
@@ -158,6 +184,31 @@ def get_global_stats():
 def health():
     """Health check endpoint"""
     return {"status": "healthy"}
+
+
+@app.get("/health/db")
+def health_db():
+    """Test de connexion a la base de donnees"""
+    try:
+        from db.connection import get_connection
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT 1")
+        cur.close()
+        conn.close()
+        return {
+            "status": "connected",
+            "database_url_set": bool(os.getenv("DATABASE_URL")),
+            "message": "Connexion DB OK"
+        }
+    except Exception as e:
+        logger.error(f"DB health check failed: {str(e)}")
+        logger.error(traceback.format_exc())
+        return {
+            "status": "error",
+            "database_url_set": bool(os.getenv("DATABASE_URL")),
+            "error": str(e)
+        }
 
 
 @app.post("/update")
