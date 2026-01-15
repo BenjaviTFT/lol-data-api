@@ -237,8 +237,8 @@ def get_update_status():
     return UpdateService.get_status()
 
 
-# Servir le frontend (DOIT être après toutes les routes API)
-app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+# Note: Le frontend est servi separement (Render Static Site ou autre)
+# Ne pas monter StaticFiles sur "/" car cela ecrase les routes API
 
 if __name__ == "__main__":
     import uvicorn
