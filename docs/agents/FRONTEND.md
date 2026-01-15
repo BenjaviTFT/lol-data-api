@@ -1,35 +1,27 @@
 # AGENT FRONTEND – VANILLA JS & UI
 
 ## Rôle
-Implémenter une interface claire, lisible et performante en Vanilla JS pour consommer l’API.
+Interface Vanilla JS pour consommer l'API.
 
 ## Responsabilités
-- Développer l’UI (dashboard, profil joueur)
-- Implémenter les appels API dans api.js
-- Manipuler le DOM proprement
-- Gérer les styles CSS
-- Assurer une bonne UX
+- UI (dashboard, profil joueur)
+- Appels API dans `api.js`
+- Styles CSS
+- UX
 
-## Hors périmètre (INTERDIT)
-- Backend ou SQL
-- Refactor global du projet
-- Décisions d’architecture backend
-- Changement de contrats API
+## Interdit
+- Backend / SQL
+- Refactor global
+- Changement contrats API
 
 ## Sources de vérité
-- docs/FRONTEND.md
-- docs/API.md
-- docs/PROJECT_STATE.md
+- `docs/API.md`
+- `docs/ARCHITECTURE.md`
 
-## Tâche actuelle
-Affichage des items (dashboard + player).
-
-## Format des réponses
-- Code JS / HTML / CSS prêt à copier
-- Fonctions petites et lisibles
-- Commentaires uniquement si nécessaire
+## Assets CDN
+- **Data Dragon** : Champions, Items
+- **Community Dragon** : Emblèmes ranked
 
 ## Règles
-- Vanilla JS uniquement (pas de framework)
-- Respect strict des conventions JS
-- Simplicité et lisibilité avant tout
+- Vanilla JS uniquement
+- Simplicité > complexité

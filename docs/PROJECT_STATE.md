@@ -7,47 +7,45 @@ ranking interne, stats individuelles, synergies DuoQ, dashboard dark, auto-updat
 ## Stack
 PostgreSQL 15 · Python 3.11 · FastAPI · Vanilla JS (no Node).
 
-## Deploiement
-- **API** : Render (`https://lol-data-api.onrender.com`)
-- **DB** : Supabase PostgreSQL
-- **Connexion** : `DATABASE_URL` (auto-detection local/prod)
+## Deploiement PRODUCTION ✅
+- **URL** : `https://lol-data-api.onrender.com`
+- **API** : Render (Web Service)
+- **DB** : Supabase PostgreSQL (pooler port 6543)
+- **Frontend** : Servi par FastAPI (meme origine)
 
-## Données actives
-- 547 matchs total
-- 176 filtrés (patch 16.1 + >= 2026-01-08)
-- 6 joueurs visibles (1 sans match filtré)
+## Donnees actives
+- 574 matchs total (migres sur Supabase)
+- 633 entries fact_player_match
+- 7 joueurs
+- Filtre actif : patch 16.1 + date >= 2026-01-08
 
-## Fonctionnalités OK
-- Dashboard global
-- Profil joueur
-- Comparateur
-- DuoQ
+## Fonctionnalites OK
+- Dashboard global (stats, classements, items populaires)
+- Classement SoloQ (rangs officiels Riot)
+- Classement Performance (score composite)
+- Profil joueur (stats, champions, roles, items)
+- Comparateur 2 joueurs
+- DuoQ Matrix + synergies
 - Auto-update (10 min)
 
 ## Architecture
-- Structure du projet **figée et validée**
-- Séparation stricte routes / services / DB
+- Structure du projet **figee et validee**
+- Separation stricte routes / services / DB
 - Calculs analytiques exclusivement en SQL (vues)
-
-## Tache en cours
-Deploiement production - en attente de validation Render.
+- Frontend servi via FileResponse + StaticFiles
 
 ## Commits recents (deploiement)
-- `95942d0` - Add PlayerRankedInfo model + RankService
-- `de7a116` - Fix root main.py (logging, /health/db, /ranking/ranked)
-- `c8f5876` - Support DATABASE_URL dans db/connection.py
+- `9573f20` - Sync frontend files
+- `0fa4719` - Fix API_BASE_URL relative
+- `a80d8b4` - Serve frontend from API
+- `858e881` - Fix riot_api.py import crash
+- `85bd4f1` - Fix StaticFiles overriding routes
 
-## Refactor termine (3 phases)
-1. **Phase 1** ✅ – Nettoyage racine (tests → `tests/`, scripts → `scripts/`, docs → `docs/`)
-2. **Phase 2** ✅ – Structuration backend (`api/services/` avec services métier)
-3. **Phase 3** ✅ – Organisation SQL (`db/schema/`, `db/views/`, `db/migrations/`)
+## Configuration requise (Render Environment)
+- `DATABASE_URL` : URL Supabase pooler (port 6543)
+- `RIOT_API_KEY` : Optionnel (pour /ranking/ranked live)
 
-## Prochaine action attendue
-1. **Valider deploiement Render** - tester `/health/db` puis `/players`
-2. Si erreur DB → verifier schema `riot_analytics` sur Supabase
-3. Ensuite : UI items (dashboard + profil)
-
-## Source de vérité
-- Vues SQL dans `riot_analytics`
-- Filtres patch/date appliqués dans les vues
-- Architecture décrite dans `docs/ARCHITECTURE.md`
+## Source de verite
+- Vues SQL dans `riot_analytics` (8 vues)
+- Filtres patch/date appliques dans les vues
+- Tables dans `riot_dim` et `riot_fact`
