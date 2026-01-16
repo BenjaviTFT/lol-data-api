@@ -101,17 +101,11 @@ const utils = {
         return colors[tier] || '#666';
     },
 
-    // URL de l'embleme du tier (utilise les PNG officiels plus fiables)
+    // URL de l'embleme du tier (utilise les PNG officiels)
     getTierEmblem: (tier) => {
         if (tier === 'UNRANKED') return '';
-        // Utiliser les emblemes PNG de Data Dragon (plus fiable que les SVG)
         const tierLower = tier.toLowerCase();
-        return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-emblem/emblem-${tierLower}.png`;
-    },
-
-    // URL alternative pour les mini-crests
-    getTierMiniCrest: (tier) => {
-        if (tier === 'UNRANKED') return '';
-        return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/images/ranked-mini-crests/${tier.toLowerCase()}.svg`;
+        // Utiliser CDragon avec un chemin plus stable
+        return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/${tierLower}.png`;
     }
 };

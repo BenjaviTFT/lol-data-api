@@ -171,6 +171,10 @@ async function loadPlayerChampions(playerId) {
     }
 }
 
+// Cache pour eviter les appels repetes en echec
+const itemsLoadedCache = new Set();
+const itemsFailedCache = new Set();
+
 // Toggle l'affichage des items d'un champion
 async function toggleChampionItems(event) {
     const row = event.currentTarget;
@@ -178,10 +182,16 @@ async function toggleChampionItems(event) {
     const playerId = row.dataset.playerId;
     const itemsRow = document.getElementById(`items-${championId}`);
     const itemsContainer = document.getElementById(`items-container-${championId}`);
+    const cacheKey = `${playerId}-${championId}`;
 
     // Toggle expanded state
     row.classList.toggle('expanded');
     itemsRow.classList.toggle('visible');
+
+    // Si deja charge ou echoue, ne pas recharger
+    if (itemsLoadedCache.has(cacheKey) || itemsFailedCache.has(cacheKey)) {
+        return;
+    }
 
     // Si on ouvre et qu'on n'a pas encore charge les items
     if (itemsRow.classList.contains('visible') && itemsContainer.querySelector('.loading')) {
@@ -190,6 +200,8 @@ async function toggleChampionItems(event) {
             const items = await API.getPlayerChampionItems(playerId, championId);
             console.log('Items received:', items);
 
+            itemsLoadedCache.add(cacheKey);
+
             if (items && items.length > 0) {
                 // Filtrer les items non-legendaires (garder seulement les items > 2000 gold typiquement)
                 const legendaryItems = items.filter(item => item.times_bought >= 1);
@@ -197,7 +209,7 @@ async function toggleChampionItems(event) {
                     <div class="champion-item-badge">
                         <img src="https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/${item.item_id}.png"
                              alt="${item.item_name}"
-                             onerror="this.src='https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/0.png'">
+                             onerror="this.onerror=null; this.style.display='none';">
                         <div class="champion-item-info">
                             <span class="champion-item-name">${item.item_name}</span>
                             <span class="champion-item-stats">
@@ -214,6 +226,7 @@ async function toggleChampionItems(event) {
             }
         } catch (error) {
             console.error('Erreur chargement items champion:', error);
+            itemsFailedCache.add(cacheKey);
             itemsContainer.innerHTML = '<span class="error-msg">Donnees non disponibles</span>';
         }
     }
@@ -410,7 +423,7 @@ async function loadPlayerItems(playerId) {
                 <div class="item-icon">
                     <img src="https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/${item.item_id}.png"
                          alt="${item.item_name}"
-                         onerror="this.src='https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/0.png'">
+                         onerror="this.onerror=null; this.style.display='none';">
                 </div>
                 <div class="item-info">
                     <div class="item-name">${item.item_name}</div>

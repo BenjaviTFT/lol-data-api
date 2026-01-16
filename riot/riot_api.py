@@ -114,7 +114,11 @@ def get_ranked_stats(summoner_id: str, region: str = "euw1"):
     url = f"https://{region}.api.riotgames.com/lol/league/v4/entries/by-summoner/{summoner_id}"
     response = requests.get(url, headers=HEADERS)
 
+    if response.status_code == 403:
+        print(f"RIOT API KEY EXPIREE (403) pour summoner {summoner_id}")
+        return []
     if response.status_code != 200:
+        print(f"Erreur API Riot by-summoner: {response.status_code}")
         return []
 
     return response.json()
@@ -128,7 +132,14 @@ def get_ranked_by_puuid(puuid: str, region: str = "euw1"):
     url = f"https://{region}.api.riotgames.com/lol/league/v4/entries/by-puuid/{puuid}"
     response = requests.get(url, headers=HEADERS)
 
+    if response.status_code == 403:
+        print(f"RIOT API KEY EXPIREE ou invalide (403) - renouveler sur developer.riotgames.com")
+        return []
+    if response.status_code == 401:
+        print(f"RIOT API KEY non autorisee (401)")
+        return []
     if response.status_code != 200:
+        print(f"Erreur API Riot by-puuid: {response.status_code} - {response.text[:100]}")
         return []
 
     return response.json()
@@ -139,8 +150,17 @@ def get_player_rank(puuid: str, region: str = "euw1"):
     Recupere le rang SoloQ d'un joueur depuis son PUUID
     Retourne: {tier, rank, lp, wins, losses} ou None
     """
-    # Utiliser directement League v4 by-puuid
+    # D'abord essayer l'endpoint direct by-puuid
     ranked_entries = get_ranked_by_puuid(puuid, region)
+
+    # Si vide, essayer via summoner_id (methode legacy)
+    if not ranked_entries:
+        print(f"by-puuid vide pour {puuid[:20]}..., essai via summoner_id")
+        summoner = get_summoner_by_puuid(puuid, region)
+        if summoner and summoner.get("id"):
+            ranked_entries = get_ranked_stats(summoner["id"], region)
+        else:
+            print(f"Impossible de recuperer summoner pour {puuid[:20]}...")
 
     # Chercher la queue SoloQ
     for entry in ranked_entries:
@@ -152,5 +172,8 @@ def get_player_rank(puuid: str, region: str = "euw1"):
                 "wins": entry.get("wins"),
                 "losses": entry.get("losses")
             }
+
+    if ranked_entries:
+        print(f"Joueur {puuid[:20]}... a des ranked mais pas de SOLO_5x5")
 
     return None

@@ -66,6 +66,7 @@ class RankService:
                 WHERE puuid IS NOT NULL
             """)
             db_by_puuid = {p["puuid"]: p for p in players_db}
+            print(f"DB players loaded: {len(players_db)} joueurs")
         except Exception as e:
             print(f"Erreur requete DB: {e}")
             db_by_puuid = {}
@@ -92,7 +93,9 @@ class RankService:
                 if "KRJPN" in tag or "KR" in tag:
                     region = "kr"
 
+                print(f"Fetching rank for {name} (region={region}, puuid={puuid[:20]}...)")
                 rank_data = get_player_rank(puuid, region)
+                print(f"  -> Result: {rank_data}")
 
                 if rank_data:
                     score = calculate_rank_score(

@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await loadGlobalStats();
     await loadRankedRanking();
-    await loadRanking();
     await loadPlayers();
     await loadPopularItems();
 
@@ -33,7 +32,6 @@ async function triggerAutoUpdate() {
 async function refreshAllData() {
     await loadGlobalStats();
     await loadRankedRanking();
-    await loadRanking();
     await loadPlayers();
     await loadPopularItems();
 }
@@ -52,10 +50,15 @@ async function loadGlobalStats() {
     }
 }
 
-// Charger le classement SoloQ (rangs officiels)
+// Charger le classement SoloQ avec stats de performance
 async function loadRankedRanking() {
     try {
-        const ranking = await API.getRankedRanking();
+        // Charger ranking et players en parallele
+        const [ranking, players] = await Promise.all([
+            API.getRankedRanking(),
+            API.getPlayers()
+        ]);
+
         const container = document.getElementById('rankedRankingContainer');
 
         if (!ranking || ranking.length === 0) {
@@ -63,8 +66,16 @@ async function loadRankedRanking() {
             return;
         }
 
+        // Creer un map des stats joueurs par nom
+        const playerStats = {};
+        players.forEach(p => {
+            playerStats[p.display_name] = p;
+        });
+
         container.innerHTML = ranking.map(player => {
             const tierClass = player.tier !== 'UNRANKED' ? `tier-${player.tier.toLowerCase()}` : '';
+            const stats = playerStats[player.display_name] || {};
+            const hasStats = stats.total_games > 0;
             const clickHandler = player.player_id > 0 ? `onclick="goToPlayer(${player.player_id})"` : '';
 
             return `
@@ -74,7 +85,7 @@ async function loadRankedRanking() {
                     ${player.tier !== 'UNRANKED' ?
                         `<img src="${utils.getTierEmblem(player.tier)}"
                               alt="${player.tier}"
-                              onerror="this.parentElement.innerHTML='<span class=\\'unranked-icon\\'>${player.tier.charAt(0)}</span>'">` :
+                              onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'unranked-icon\\'>${player.tier.charAt(0)}</span>';">` :
                         '<span class="unranked-icon">?</span>'
                     }
                 </div>
@@ -96,65 +107,32 @@ async function loadRankedRanking() {
                         </div>
                     ` : '<div class="ranked-unranked">Non classe</div>'}
                 </div>
+                ${hasStats ? `
+                <div class="ranked-performance">
+                    <div class="perf-stat">
+                        <span class="perf-label">Games</span>
+                        <span class="perf-value">${stats.total_games}</span>
+                    </div>
+                    <div class="perf-stat">
+                        <span class="perf-label">WR Grp</span>
+                        <span class="perf-value ${stats.winrate_pct >= 50 ? 'positive' : 'negative'}">${utils.formatWinrate(stats.winrate_pct)}</span>
+                    </div>
+                    <div class="perf-stat">
+                        <span class="perf-label">KDA</span>
+                        <span class="perf-value">${utils.formatKDA(stats.kda_ratio)}</span>
+                    </div>
+                    <div class="perf-stat">
+                        <span class="perf-label">DPM</span>
+                        <span class="perf-value">${utils.formatNumber(stats.avg_dpm)}</span>
+                    </div>
+                </div>
+                ` : ''}
             </div>
         `}).join('');
     } catch (error) {
         console.error('Erreur chargement ranking ranked:', error);
         document.getElementById('rankedRankingContainer').innerHTML =
             '<div class="loading">Erreur lors du chargement des rangs</div>';
-    }
-}
-
-// Charger le classement performance
-async function loadRanking() {
-    try {
-        const ranking = await API.getRanking();
-        const container = document.getElementById('rankingContainer');
-
-        if (ranking.length === 0) {
-            container.innerHTML = '<div class="loading">Aucune donnée de classement disponible</div>';
-            return;
-        }
-
-        container.innerHTML = ranking.map(player => `
-            <div class="rank-card" onclick="goToPlayer(${player.player_id})">
-                <div class="rank-badge ${utils.getRankBadge(player.rank)}">
-                    #${player.rank}
-                </div>
-                <div class="rank-info">
-                    <div class="rank-player-name">${player.display_name}</div>
-                    <div class="rank-stats-row">
-                        <div class="rank-stat">
-                            <span class="rank-stat-label">Games</span>
-                            <span class="rank-stat-value">${player.total_games}</span>
-                        </div>
-                        <div class="rank-stat">
-                            <span class="rank-stat-label">Winrate</span>
-                            <span class="rank-stat-value">${utils.formatWinrate(player.winrate_pct)}</span>
-                        </div>
-                        <div class="rank-stat">
-                            <span class="rank-stat-label">KDA</span>
-                            <span class="rank-stat-value">${utils.formatKDA(player.kda_ratio)}</span>
-                        </div>
-                        <div class="rank-stat">
-                            <span class="rank-stat-label">DPM</span>
-                            <span class="rank-stat-value">${utils.formatNumber(player.avg_dpm)}</span>
-                        </div>
-                        <div class="rank-stat">
-                            <span class="rank-stat-label">CS/min</span>
-                            <span class="rank-stat-value">${player.avg_cs_per_min}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="rank-score">
-                    ${player.score}
-                </div>
-            </div>
-        `).join('');
-    } catch (error) {
-        console.error('Erreur chargement classement:', error);
-        document.getElementById('rankingContainer').innerHTML =
-            '<div class="loading">Erreur lors du chargement du classement</div>';
     }
 }
 
@@ -165,7 +143,7 @@ async function loadPlayers() {
         const container = document.getElementById('playersGrid');
 
         if (players.length === 0) {
-            container.innerHTML = '<div class="loading">Aucun joueur trouvé</div>';
+            container.innerHTML = '<div class="loading">Aucun joueur trouve</div>';
             return;
         }
 
@@ -234,7 +212,7 @@ async function loadPopularItems() {
                 <div class="item-icon">
                     <img src="https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/${item.item_id}.png"
                          alt="${item.item_name}"
-                         onerror="this.src='https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/0.png'">
+                         onerror="this.onerror=null; this.style.display='none';">
                 </div>
                 <div class="item-info">
                     <div class="item-name">${item.item_name}</div>
